@@ -63,10 +63,10 @@ regd_users.post("/login", (req,res) => {
 regd_users.put("/auth/review/:isbn", (req, res) => {
     let isbn = req.params.isbn;
     let username = req.session.username;
-    const review = req.body.reviews;
-
+    console.log(`isbn : ${isbn}, username: ${username}`)
+    const review = req.query.reviews;
     if (books[isbn] && username){
-        let alreadyReviewed = books[isbn].reviews.find((reviews)=>reviews.username === username);
+        let alreadyReviewed = books[isbn].reviews.find((review)=>review.username === username);
         if (alreadyReviewed){
             alreadyReviewed.reviews = review
             // books[isbn].reviews[reviews] = {review}
