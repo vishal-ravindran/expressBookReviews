@@ -16,11 +16,13 @@ app.use("/customer/auth/*", function auth(req,res,next){
 const username = req.body.username;
 const password = req.body.password;
 
-if (!username || password){
+if (!username || !password){
     res.status(404).send("Error loggin in")
 }
 
-if (authenticatedUser(username, password)){
+// if (authenticatedUser(username, password)){
+if (authenticated(username, password)){
+
     let accessToken = jwt.sign({
         data: password
     }, "access", {expiresIn: 60 *60});

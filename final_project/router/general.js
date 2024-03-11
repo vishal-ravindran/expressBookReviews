@@ -5,21 +5,23 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
 public_users.post("/register", (req, res) => {
-  let username = req.body.username;
-  let password = req.body.password;
+    let username = req.body.username;
+    let password = req.body.password;
 
-  if (username && password) {
-    let registeredUser = users.find((user) => user.username === username);
+    if (username && password) {
+        let registeredUser = users.find((user) => user.username === username);
 
-    if (!registeredUser) {
-      users.push({ username: username, password: password });
-      return res.status(200).send(`User with username ${username} registered`);
-    } else {
-      return res.status(409).send("Username already exists!");
+        if (!registeredUser) {
+        users.push({ "username": username, "password": password });
+        return res.status(200).send(`User with username " ${username} " registered`);
+        } 
+        else {
+        return res.status(409).send("Username already exists!");
+        }
     }
-  } else {
-    return res.status(400).send("Invalid username or password");
-  }
+    else {
+    return res.status(400).send("Username or password not provided");
+    }
 });
 
 // Get the book list available in the shop
@@ -83,7 +85,7 @@ public_users.get("/review/:isbn", function (req, res) {
   let isbn = req.params.isbn;
   if (books[isbn]) {
     let bookReview = books[isbn].reviews;
-    console.log("Book Review : " + bookReview);
+    console.log("Book Review : " + JSON.stringify(bookReview));
     return res.status(200).send(JSON.stringify(bookReview, null, 4));
   } else {
     return res.status(208).send("Couldn't find review for the book");

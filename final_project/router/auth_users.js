@@ -7,11 +7,12 @@ let users = [];
 
 const isValid = (username)=>{ //returns boolean
 //write code to check is the username is valid
-
     let alreadyRegisteredUser = users.filter((user)=> user.username === username);
+
     if (alreadyRegisteredUser.length> 0){
         return true;
-    }else{
+    }
+    else{
         return false;
     }
 
@@ -55,38 +56,33 @@ regd_users.post("/login", (req,res) => {
 
     }
     else{
-        req.status(208).send("failed to authenticate user")
+        res.status(208).send("failed to authenticate user")
     }
 });
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-    let isbn = req.params.isbn;
-    let username = req.session.username;
-    console.log(`isbn : ${isbn}, username: ${username}`)
-    const review = req.query.reviews;
-    if (books[isbn] && username){
-        let alreadyReviewed = books[isbn].reviews.find((review)=>review.username === username);
-        if (alreadyReviewed){
-            alreadyReviewed.reviews = review
-            // books[isbn].reviews[reviews] = {review}
-            return res.status(200).send(books[isbn], null, 4);
-        }else{
+    const isbn = req.params.isbn;
+    const username = req.session.username;
+    const review = req.query.review;
 
-        }
-        books[isbn].reviews.push(
-
-            {
-               "username": username,
-               "review": review
-           }
-        )
-        return res.status(200).send(books[isbn], null, 4);
+    if (!username) {
+        return res.status(401).send("User not found. Please log in to leave a review.");
     }
-    else{
 
-        return res.status(404).send("Please log in to leave a review");
+    if (!books[isbn]) {
+        return res.status(404).send("Book not found.");
+    }
 
+    let alreadyReviewed = books[isbn].reviews[username];
+
+    if (alreadyReviewed) {
+        console.log("User has already reviewed the book. If another review is posted, it will overwrite the original.");
+        books[isbn].reviews[username] = review;
+        return res.status(200).send(books[isbn].reviews[username]);
+    } else {
+        books[isbn].reviews[username] = review;
+        return res.status(200).send(books[isbn]);
     }
 });
 
